@@ -8,6 +8,7 @@ import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 import org.specs2.specification.Scope
 
+import scala.util.{Failure, Success}
 import scalaz.Scalaz._
 
 @RunWith(classOf[JUnitRunner])

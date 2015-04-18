@@ -7,18 +7,30 @@ import scala.io.Source
 
 trait TransactionRepositoryComponentImpl extends TransactionRepositoryComponent {
 
-  class FileTransactionRepositoryImpl(transactionFileName: String = "target/transactions.csv") extends TransactionRepository {
-    override def loadTransactions: TransactionFlow = Source.fromFile(transactionFileName).getLines().map(Transaction(_))
+  class FileTransactionRepositoryImpl(transactionFileName: String = "target/transactions.csv") extends TransactionRepository with FromFile {
+    override def loadTransactions: TransactionFlow =
+      fromFile(transactionFileName)
+        .map(Transaction(_))
+        .filter(_.isSuccess)
+        .map(_.get)
   }
 
-  class FileExchangeRateRepositoryImpl(exchangeFileName: String = "target/exchangerates.csv") extends ExchangeRateRepository {
+  class FileExchangeRateRepositoryImpl(exchangeFileName: String = "target/exchangerates.csv") extends ExchangeRateRepository with FromFile {
 
     val EXCHANGE_PATTERN = "(.*),(.*),(.*)".r
 
-    override def loadExchangeRates: ExchangeRates = Source.fromFile(exchangeFileName).getLines()
-      .collect {
-      case EXCHANGE_PATTERN(from, to, amount) => (from, to) -> BigDecimal(amount)
-    }.foldLeft(Map.empty[(Currency, Currency), Amount])(_ + _)
+    override def loadExchangeRates: ExchangeRates =
+      fromFile(exchangeFileName)
+        .collect { case EXCHANGE_PATTERN(from, to, amount) => (from, to) -> BigDecimal(amount)}
+        .foldLeft(Map.empty[(Currency, Currency), Amount])(_ + _)
+  }
+
+  trait FromFile {
+    def fromFile(transactionFileName: String): Iterator[String] = {
+      Source
+        .fromFile(transactionFileName)
+        .getLines()
+    }
   }
 
 }
