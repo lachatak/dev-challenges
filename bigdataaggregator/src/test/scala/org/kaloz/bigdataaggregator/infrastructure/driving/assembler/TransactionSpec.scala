@@ -10,6 +10,13 @@ class TransactionSpec extends Specification {
 
   "Transaction" should {
 
+    "generate a Success if the transaction is parsable with lowercase currency" in {
+
+      val result = Transaction("KRS,gbp,10.0")
+
+      result must beSuccessfulTry(DTransaction("KRS", "GBP", BigDecimal(10.0)))
+    }
+
     "generate a Success if the transaction is parsable" in {
 
       val result = Transaction("KRS,GBP,10.0")
