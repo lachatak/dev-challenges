@@ -8,7 +8,7 @@ import scalaz.Scalaz._
 
 trait ResultWriterComponentImpl extends ResultWriterComponent {
 
-  class FileResultWriterImpl(resultFileName: String = "target/aggregate.csv") extends ResultWriter {
+  class FileResultWriterImpl(resultFileName: String = "aggregate.csv") extends ResultWriter {
 
     def write(result: PartnerAmountSummary): Option[PartnerAmountSummary] = {
 

@@ -7,7 +7,7 @@ import scala.io.Source
 
 trait TransactionRepositoryComponentImpl extends TransactionRepositoryComponent {
 
-  class FileTransactionRepositoryImpl(transactionFileName: String = "target/transactions.csv") extends TransactionRepository with FromFile {
+  class FileTransactionRepositoryImpl(transactionFileName: String = "transactions.csv") extends TransactionRepository with FromFile {
     override def loadTransactions: TransactionFlow =
       fromFile(transactionFileName)
         .map(Transaction(_))
@@ -15,7 +15,7 @@ trait TransactionRepositoryComponentImpl extends TransactionRepositoryComponent 
         .map(_.get)
   }
 
-  class FileExchangeRateRepositoryImpl(exchangeFileName: String = "src/main/resources/exchangerates.csv") extends ExchangeRateRepository with FromFile {
+  class FileExchangeRateRepositoryImpl(exchangeFileName: String = "exchangerates.csv") extends ExchangeRateRepository with FromFile {
 
     val EXCHANGE_PATTERN = "(.*),(.*),(.*)".r
 

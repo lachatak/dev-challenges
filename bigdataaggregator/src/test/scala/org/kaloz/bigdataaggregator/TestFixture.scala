@@ -7,34 +7,21 @@ import scala.util.Random
 
 object TestFixture extends App {
 
-  val currencies = List("USD", "EUR", "GBP", "AUD", "JPY", "RUB", "CHF", "HUF", "PLN", "SEK")
-
   initDefault()
 
   def initDefault() {
     val startTime = System.currentTimeMillis()
 
-    delete("target/transactions.csv")
+    delete()
 
-    createExchangeRatesFile()
     createTransactionsFile()
 
     println(s"Generation Time: ${(System.currentTimeMillis() - startTime) / 1000.00}s")
   }
 
-  def createExchangeRatesFile(fileName: String = "target/exchangerates.csv") {
+  def createTransactionsFile(fileName: String = "transactions.csv", numOfPartners: Int = 10, numOfTransactions: Int = 1000 * 1000 * 10) {
 
-
-    val exchangeRates = for {
-      sourceCurrency <- currencies
-      targetCurrency <- currencies if targetCurrency != sourceCurrency
-    } yield sourceCurrency + "," + targetCurrency + "," + randomNumber()
-
-    writeFile(fileName, exchangeRates.iterator)
-  }
-
-  def createTransactionsFile(fileName: String = "target/transactions.csv", numOfPartners: Int = 10, numOfTransactions: Int = 1000 * 1000 * 10) {
-
+    val currencies = List("USD", "EUR", "GBP", "AUD", "JPY", "RUB", "CHF", "HUF", "PLN", "SEK")
     val partners = "KRS" :: List.fill(numOfPartners)(Random.alphanumeric.take(5).mkString)
 
     writeFile(fileName, Stream.continually(partners(Random.nextInt(partners.size)) + "," + currencies(Random.nextInt(currencies.length)) + "," + randomNumber())
@@ -54,6 +41,6 @@ object TestFixture extends App {
     number.setScale(scale, RoundingMode.HALF_DOWN)
   }
 
-  def delete(file: String) = new File(file).delete()
+  def delete(file: String = "transactions.csv") = new File(file).delete()
 
 }
