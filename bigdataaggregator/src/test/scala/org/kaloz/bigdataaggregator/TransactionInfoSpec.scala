@@ -36,6 +36,16 @@ class TransactionInfoSpec extends Specification {
       result mustEqual None
     }
 
+    "give back None sum amount for a partner and currency if TransactionFlow provided but currency cannot be found in the ExchangeRates" in new scope {
+
+      exchangeRateRepository.loadExchangeRates returns Map.empty
+      transactionRepository.loadTransactions returns List(Transaction("KRS", "CHF", BigDecimal(1))).iterator
+
+      val result = sumByPartnerAndCurrency("KRS", "GBP")
+
+      result mustEqual None
+    }
+
     "give back correct grouping by partner for a given currency if TransactionFlow and ExchangeRates are provided" in new scope {
 
       exchangeRateRepository.loadExchangeRates returns Map(("CHF", "GBP") -> BigDecimal(2))
@@ -51,6 +61,17 @@ class TransactionInfoSpec extends Specification {
 
       exchangeRateRepository.loadExchangeRates returns Map(("CHF", "GBP") -> BigDecimal(2))
       transactionRepository.loadTransactions returns List.empty.iterator
+
+      val result = sumByCurrency("GBP")
+
+      result must beNone
+      there was no(resultWriter).write(any[PartnerAmountSummary])
+    }
+
+    "give back None grouping by partner for a given currency if TransactionFlow provided but currency cannot be found in the ExchangeRates" in new scope {
+
+      exchangeRateRepository.loadExchangeRates returns Map.empty
+      transactionRepository.loadTransactions returns List(Transaction("KRS", "CHF", BigDecimal(1))).iterator
 
       val result = sumByCurrency("GBP")
 

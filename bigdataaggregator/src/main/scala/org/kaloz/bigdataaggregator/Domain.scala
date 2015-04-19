@@ -15,14 +15,14 @@ object Domain {
 
     def add(addition: Amount) = copy(amount = amount + addition)
 
-    def |~>(target: Currency)(implicit exchangeRates: ExchangeRates): Amount = target match {
-      case `currency` => this.amount
-      case _ => this.amount * exchangeRates(currency, target)
+    def |~>(target: Currency)(implicit exchangeRates: ExchangeRates): Option[Amount] = target match {
+      case `currency` => this.amount.some
+      case _ => exchangeRates.get(currency, target).map(_ * this.amount)
     }
 
-    def ~>(target: Currency)(implicit exchangeRates: ExchangeRates): Transaction = target match {
-      case `currency` => this
-      case _ => copy(amount = this.amount * exchangeRates(currency, target), currency = target)
+    def ~>(target: Currency)(implicit exchangeRates: ExchangeRates): Option[Transaction] = target match {
+      case `currency` => this.some
+      case _ => exchangeRates.get(currency, target).map(c => copy(amount = this.amount * c, currency = target))
     }
   }
 
@@ -47,12 +47,14 @@ object Domain {
       loadTransactions
         .filter(_.partner == partner)
         .map(_ |~> currency)
-        .foldLeft(none[Amount])(_ |+| _.some)
+        .foldLeft(none[Amount])(_ |+| _)
 
     def sumByCurrency(currency: Currency): Option[PartnerAmountSummary] = {
       loadTransactions
         .map(_ ~> currency)
-        .foldLeft(none[PartnerAmountSummary])((acc, tr) => acc |+| Map(tr.partner -> tr.amount).some) >>= write
+        .flatten
+        .map(tr => Map(tr.partner -> tr.amount).some)
+        .foldLeft(none[PartnerAmountSummary])((acc, tr) => acc |+| tr) >>= write
     }
   }
 

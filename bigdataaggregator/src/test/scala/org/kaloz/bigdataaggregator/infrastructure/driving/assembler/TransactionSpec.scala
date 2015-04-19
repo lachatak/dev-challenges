@@ -5,8 +5,6 @@ import org.kaloz.bigdataaggregator.Domain.{Transaction => DTransaction}
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 
-import scala.util.{Failure, Success}
-
 @RunWith(classOf[JUnitRunner])
 class TransactionSpec extends Specification {
 
@@ -26,7 +24,7 @@ class TransactionSpec extends Specification {
       result must beFailedTry.withThrowable[ArrayIndexOutOfBoundsException]
     }
 
-    "generate a Failure with ArrayIndexOutOfBoundsException if the transaction amount is not number" in {
+    "generate a Failure with NumberFormatException if the transaction amount is not number" in {
 
       val result = Transaction("KRS,GBP,INVALID")
 
