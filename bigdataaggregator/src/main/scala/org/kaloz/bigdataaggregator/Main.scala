@@ -8,17 +8,22 @@ import scala.collection.breakOut
 
 object Main extends App with TransactionInfo with TransactionRepositoryComponentImpl with ResultWriterComponentImpl {
 
-  val transactionRepository = new FileTransactionRepositoryImpl()
-
-  val exchangeRateRepository = new FileExchangeRateRepositoryImpl()
-
-  val resultWriter = new FileResultWriterImpl()
-
   val Opt = """(\S+)=(\S+)""".r
 
   val parsedArgs: Map[String, String] = args.collect { case Opt(key, value) => key -> value}(breakOut)
+
   val partner = parsedArgs.getOrElse("partner", "KRS")
   val currency = parsedArgs.getOrElse("currency", "GBP")
+  val transactions = parsedArgs.getOrElse("trFile", "transactions.csv")
+  val exchangerates = parsedArgs.getOrElse("exFile", "exchangerates.csv")
+
+  println(s"Start processing with partner=$partner, currency=$currency, transactions=$transactions, exchangerates=$exchangerates ...")
+
+  val transactionRepository = new FileTransactionRepositoryImpl(transactions)
+
+  val exchangeRateRepository = new FileExchangeRateRepositoryImpl(exchangerates)
+
+  val resultWriter = new FileResultWriterImpl()
 
   var startTime = System.currentTimeMillis()
   val result = sumByCurrency(currency)
