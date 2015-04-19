@@ -5,8 +5,8 @@ package org.kaloz.bigdataaggregator
  */
 object ReaderMonad extends App {
 
-  case class Test(g: String => Int){
-    def apply(s:String) = g(s)
+  case class Test(g: String => Int) {
+    def apply(s: String) = g(s)
   }
 
 

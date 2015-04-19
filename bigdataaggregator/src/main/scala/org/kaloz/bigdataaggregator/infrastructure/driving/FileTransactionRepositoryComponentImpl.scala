@@ -15,13 +15,13 @@ trait TransactionRepositoryComponentImpl extends TransactionRepositoryComponent 
         .map(_.get)
   }
 
-  class FileExchangeRateRepositoryImpl(exchangeFileName: String = "target/exchangerates.csv") extends ExchangeRateRepository with FromFile {
+  class FileExchangeRateRepositoryImpl(exchangeFileName: String = "src/main/resources/exchangerates.csv") extends ExchangeRateRepository with FromFile {
 
     val EXCHANGE_PATTERN = "(.*),(.*),(.*)".r
 
     override def loadExchangeRates: ExchangeRates =
       fromFile(exchangeFileName)
-        .collect { case EXCHANGE_PATTERN(from, to, amount) => (from, to) -> BigDecimal(amount)}
+        .collect { case EXCHANGE_PATTERN(from, to, amount) => (from.toUpperCase, to.toUpperCase) -> BigDecimal(amount)}
         .foldLeft(Map.empty[(Currency, Currency), Amount])(_ + _)
   }
 
