@@ -9,6 +9,10 @@ object ReaderMonad extends App {
     def apply(s: String) = g(s)
   }
 
+  println(for{
+    a <- 'a' to 'z'
+    b <- 'a' to 'z'
+  } yield s"$a$b$a")
 
   println(Test(_.size)("lofasz"))
 }
