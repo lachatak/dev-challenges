@@ -13,7 +13,7 @@ class TransactionRepositoryComponentImplSpec extends Specification {
 
   "FileTransactionRepositoryImpl" should {
 
-    "process parse valid input line and generate a Transaction" in new scope {
+    " parse valid input line and generate a Transaction" in new scope {
 
       doReturn(List("KRS,GBP,10.0").iterator).when(transactionRepository).fromFile(anyString)
 
@@ -22,7 +22,7 @@ class TransactionRepositoryComponentImplSpec extends Specification {
       result.next() must beEqualTo(Transaction("KRS", "GBP", BigDecimal(10.0)))
     }
 
-    "process parse valid input line with lowercase and generate a Transaction" in new scope {
+    "parse valid input line with lowercase and generate a Transaction" in new scope {
 
       doReturn(List("KRS,gbp,10.0").iterator).when(transactionRepository).fromFile(anyString)
 

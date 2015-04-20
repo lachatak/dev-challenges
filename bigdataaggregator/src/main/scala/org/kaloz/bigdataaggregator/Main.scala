@@ -28,11 +28,16 @@ object Main extends App with TransactionInfo with TransactionRepositoryComponent
   var startTime = System.currentTimeMillis()
   val result = sumByCurrency(currency)
   println(result)
-  println(s"Time taken normal: ${(System.currentTimeMillis() - startTime) / 1000.00}s")
+  println(s"Process time from file -> result to file : ${(System.currentTimeMillis() - startTime) / 1000.00}s")
+
+  startTime = System.currentTimeMillis()
+  val mem = result.get(partner)
+  println(mem)
+  println(s"Process time from memory -> result to console : ${(System.currentTimeMillis() - startTime) / 1000.00}s")
 
   startTime = System.currentTimeMillis()
   val sum = sumByPartnerAndCurrency(partner, currency)
   println(sum)
-  println(s"Time taken normal: ${(System.currentTimeMillis() - startTime) / 1000.00}s")
+  println(s"Process time form file -> result to console : ${(System.currentTimeMillis() - startTime) / 1000.00}s")
 
 }
