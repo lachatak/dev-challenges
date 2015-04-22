@@ -2,15 +2,13 @@ package org.kaloz.bigdataaggregator
 
 import org.kaloz.bigdataaggregator.Domain._
 import org.kaloz.bigdataaggregator.infrastructure.driven.ResultWriterComponentImpl
-import org.kaloz.bigdataaggregator.infrastructure.driving.TransactionRepositoryComponentImpl
+import org.kaloz.bigdataaggregator.infrastructure.driving.FileTransactionRepositoryComponentImpl
 
 import scala.collection.breakOut
 
-object Main extends App with TransactionInfo with TransactionRepositoryComponentImpl with ResultWriterComponentImpl {
+object Main extends App with TransactionInfo with FileTransactionRepositoryComponentImpl with ResultWriterComponentImpl {
 
-  val Opt = """(\S+)=(\S+)""".r
-
-  val parsedArgs: Map[String, String] = args.collect { case Opt(key, value) => key -> value}(breakOut)
+  val parsedArgs = parseArgs(args)
 
   val partner = parsedArgs.getOrElse("partner", "KRS")
   val currency = parsedArgs.getOrElse("currency", "GBP")
@@ -25,19 +23,13 @@ object Main extends App with TransactionInfo with TransactionRepositoryComponent
 
   val resultWriter = new FileResultWriterImpl()
 
-  var startTime = System.currentTimeMillis()
-  val result = sumByCurrency(currency)
+  val result = benchmark("Process time from file -> result to file :", sumByCurrency(currency))
   println(result)
-  println(s"Process time from file -> result to file : ${(System.currentTimeMillis() - startTime) / 1000.00}s")
 
-  startTime = System.currentTimeMillis()
-  val mem = result.get(partner)
+  val mem = benchmark("Process time from memory -> result to console :", result.get(partner))
   println(mem)
-  println(s"Process time from memory -> result to console : ${(System.currentTimeMillis() - startTime) / 1000.00}s")
 
-  startTime = System.currentTimeMillis()
-  val sum = sumByPartnerAndCurrency(partner, currency)
+  val sum = benchmark("Process time form file -> result to console :",sumByPartnerAndCurrency(partner, currency))
   println(sum)
-  println(s"Process time form file -> result to console : ${(System.currentTimeMillis() - startTime) / 1000.00}s")
 
 }

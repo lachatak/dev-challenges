@@ -5,14 +5,13 @@ import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.Transaction
 
 import scala.io.Source
 
-trait TransactionRepositoryComponentImpl extends TransactionRepositoryComponent {
+trait FileTransactionRepositoryComponentImpl extends TransactionRepositoryComponent {
 
   class FileTransactionRepositoryImpl(transactionFileName: String = "transactions.csv") extends TransactionRepository with FromFile {
     override def loadTransactions: TransactionFlow =
       fromFile(transactionFileName)
         .map(Transaction(_))
-        .filter(_.isSuccess)
-        .map(_.get)
+        .flatten
   }
 
   class FileExchangeRateRepositoryImpl(exchangeFileName: String = "exchangerates.csv") extends ExchangeRateRepository with FromFile {

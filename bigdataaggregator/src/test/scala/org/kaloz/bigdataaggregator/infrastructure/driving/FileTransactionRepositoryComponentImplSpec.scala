@@ -9,7 +9,7 @@ import org.specs2.runner.JUnitRunner
 import org.specs2.specification.Scope
 
 @RunWith(classOf[JUnitRunner])
-class TransactionRepositoryComponentImplSpec extends Specification {
+class FileTransactionRepositoryComponentImplSpec extends Specification {
 
   "FileTransactionRepositoryImpl" should {
 
@@ -71,7 +71,7 @@ class TransactionRepositoryComponentImplSpec extends Specification {
     }
   }
 
-  private trait scope extends Scope with Mockito with ThrownExpectations with TransactionRepositoryComponentImpl {
+  private trait scope extends Scope with Mockito with ThrownExpectations with FileTransactionRepositoryComponentImpl {
 
     val transactionRepository = spy(new FileTransactionRepositoryImpl)
 
