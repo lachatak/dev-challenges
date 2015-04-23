@@ -4,6 +4,7 @@ import org.kaloz.bigdataaggregator.Domain._
 import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.Transaction
 
 import scala.io.Source
+import scala.util.Success
 
 trait FileTransactionRepositoryComponentImpl extends TransactionRepositoryComponent {
 
@@ -11,7 +12,7 @@ trait FileTransactionRepositoryComponentImpl extends TransactionRepositoryCompon
     override def loadTransactions: TransactionFlow =
       fromFile(transactionFileName)
         .map(Transaction(_))
-        .flatten
+        .collect {case Success(s) => s}
   }
 
   class FileExchangeRateRepositoryImpl(exchangeFileName: String = "exchangerates.csv") extends ExchangeRateRepository with FromFile {
