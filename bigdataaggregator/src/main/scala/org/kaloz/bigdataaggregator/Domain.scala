@@ -13,8 +13,6 @@ object Domain {
 
   case class Transaction(partner: Partner, currency: Currency, amount: Amount = BigDecimal(0)) {
 
-    def add(addition: Amount) = copy(amount = amount + addition)
-
     def |~>(target: Currency)(implicit exchangeRates: ExchangeRates): Option[Amount] = target match {
       case `currency` => this.amount.some
       case _ => exchangeRates.get(currency, target).map(_ * this.amount)

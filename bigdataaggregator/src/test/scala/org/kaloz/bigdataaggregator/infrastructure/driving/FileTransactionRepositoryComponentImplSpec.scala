@@ -13,7 +13,7 @@ class FileTransactionRepositoryComponentImplSpec extends Specification {
 
   "FileTransactionRepositoryImpl" should {
 
-    " parse valid input line and generate a Transaction" in new scope {
+    "parse valid input line and generate a Transaction" in new scope {
 
       doReturn(List("KRS,GBP,10.0").iterator).when(transactionRepository).fromFile(anyString)
 

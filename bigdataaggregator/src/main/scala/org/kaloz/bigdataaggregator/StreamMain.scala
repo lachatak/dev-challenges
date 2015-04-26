@@ -4,9 +4,7 @@ import org.kaloz.bigdataaggregator.Domain._
 import org.kaloz.bigdataaggregator.infrastructure.driven.ResultWriterComponentImpl
 import org.kaloz.bigdataaggregator.infrastructure.driving.FileTransactionRepositoryComponentImpl
 
-import scala.collection.breakOut
-
-object Main extends App with TransactionInfo with FileTransactionRepositoryComponentImpl with ResultWriterComponentImpl {
+object StreamMain extends App with TransactionInfo with FileTransactionRepositoryComponentImpl with ResultWriterComponentImpl {
 
   val parsedArgs = parseArgs(args)
 
@@ -24,12 +22,9 @@ object Main extends App with TransactionInfo with FileTransactionRepositoryCompo
   val resultWriter = new FileResultWriterImpl()
 
   val result = benchmark("Process time from file -> result to file :", sumByCurrency(currency))
-  println(result)
 
-  val mem = benchmark("Process time from memory -> result to console :", result.get(partner))
-  println(mem)
+  benchmark("Process time from memory -> result to console :", result.get(partner))
 
-  val sum = benchmark("Process time form file -> result to console :",sumByPartnerAndCurrency(partner, currency))
-  println(sum)
+  benchmark("Process time form file -> result to console :", sumByPartnerAndCurrency(partner, currency))
 
 }
