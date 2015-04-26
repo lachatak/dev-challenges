@@ -9,6 +9,7 @@ object Domain {
   type Amount = BigDecimal
   type TransactionFlow = Iterator[Transaction]
   type PartnerAmountSummary = Map[Partner, Amount]
+  type ExchangeRate = ((Currency, Currency), Amount)
   type ExchangeRates = Map[(Currency, Currency), Amount]
 
   case class Transaction(partner: Partner, currency: Currency, amount: Amount = BigDecimal(0)) {

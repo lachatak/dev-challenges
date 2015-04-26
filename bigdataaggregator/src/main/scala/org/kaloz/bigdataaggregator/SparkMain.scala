@@ -1,38 +1,40 @@
 package org.kaloz.bigdataaggregator
 
 import org.apache.spark.{SparkConf, SparkContext}
+import org.kaloz.bigdataaggregator.Domain.{Currency, Partner}
+import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.{ExchangeRate, Transaction}
 
-object SparkMain {
-  def process(targetCurrency: String) = {
-    val sc = new SparkContext(new SparkConf().setSparkHome(System.getenv("SPARK_HOME")).setAppName("challenge").setMaster("local[4]").setJars(List(SparkContext.jarOfClass(this.getClass).get)))
+import scala.util.Success
+
+object SparkMain extends MainApp {
+
+  process(conf.getString("spark.main.host"), partner, currency)
+
+  def process(host: String, partner: Partner, currency: Currency) = {
+    val sc = new SparkContext(new SparkConf().setAppName("challenge").setMaster(host).setJars(List(SparkContext.jarOfClass(this.getClass).get)))
 
     try {
-      benchmark("Spark results: ", parse(sc, targetCurrency))
+      benchmark("Spark results: ", parse(sc, partner, currency))
     } finally {
       sc.stop
     }
   }
 
-  def parse(sc: SparkContext, targetCurrency: String) = {
-    val rates = sc.textFile("/Users/krisztian.lachata/Documents/workspaces/pet/dev-challenges/bigdataaggregator/exchangerates.csv")
-      .map(_.split(","))
-      .filter { case Array(from, to, rate) => to == targetCurrency}
-      .map { case Array(from, to, rate) => (from, rate.toDouble)}
+  def parse(sc: SparkContext, partner: Partner, target: Currency) = {
+
+    implicit val exchangeRates = sc.textFile(exchangerates)
+      .map(ExchangeRate(_))
+      .collect { case Success(s) => s}
       .collect()
       .toMap
 
-    def exchange(currency: String, amount: String) = if (currency == targetCurrency) amount.toDouble else amount.toDouble * rates(currency)
-
-    sc.textFile("/Users/krisztian.lachata/Documents/workspaces/pet/dev-challenges/bigdataaggregator/transactions.csv")
-      .map(_.split(","))
-      .map { case Array(partner, currency, amount) => (partner, exchange(currency, amount))}
+    sc.textFile(transactions)
+      .map(Transaction(_))
+      .collect { case Success(s) => s ~> currency}
+      .collect { case Some(s) => (s.partner, s.amount)}
       .reduceByKey(_ + _)
       .collect()
       .toMap
   }
 
-  def main(args: Array[String]) {
-    val targetCurrency = "GBP" // TODO parse args
-    process(targetCurrency)
-  }
 }

@@ -1,5 +1,3 @@
-import sbtassembly.Plugin.AssemblyKeys._
-
 name := "bigdataaggregator"
 
 organization := "org.kaloz"
@@ -14,22 +12,7 @@ javacOptions ++= Seq("-Xlint:deprecation", "-encoding", "utf8", "-XX:MaxPermSize
 
 mainClass in assembly := Some("org.kaloz.bigdataaggregator.SparkMain")
 
-jarName in assembly := "bigdataaggregator.jar"
-
-val sharedMergeStrategy: (String => MergeStrategy) => String => MergeStrategy =
-  old => {
-    case x if x.startsWith("META-INF/ECLIPSEF.RSA") => MergeStrategy.last
-    case x if x.startsWith("META-INF/mailcap") => MergeStrategy.last
-    case x if x.endsWith("plugin.properties") => MergeStrategy.last
-    case x if x.endsWith("mimetypes.default") => MergeStrategy.last
-    case x => old(x)
-  }
-
-// Load Assembly Settings
-
-assemblySettings
-
-mergeStrategy in assembly <<= (mergeStrategy in assembly)(sharedMergeStrategy)
+assemblyJarName in assembly := "bigdataaggregator.jar"
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % "7.1.1",
@@ -37,19 +20,18 @@ libraryDependencies ++= Seq(
     ExclusionRule("commons-beanutils", "commons-beanutils-core"),
     ExclusionRule("commons-collections", "commons-collections"),
     ExclusionRule("commons-logging", "commons-logging"),
-    ExclusionRule("org.slf4j", "slf4j-log4j12"),
-    ExclusionRule("org.hamcrest", "hamcrest-core"),
-    ExclusionRule("junit", "junit"),
-    ExclusionRule("org.jboss.netty", "netty"),
     ExclusionRule("com.esotericsoftware.minlog", "minlog"),
-    ExclusionRule("javax.activation", "activation"),
-    ExclusionRule("com.google.guava", "guava"),
-    ExclusionRule("org.apache.spark", "spark-network-shuffle_2.11"),
-    ExclusionRule("org.apache.spark", "spark-network-common_2.11"),
-    ExclusionRule("org.spark-project.spark", "unused"),
     ExclusionRule("org.apache.hadoop", "hadoop-yarn-api")
     )
 )
+
+assemblyMergeStrategy in assembly := {
+  case x if x.endsWith("UnusedStubClass.class") => MergeStrategy.first
+  case PathList("com", "google", xs @ _*) => MergeStrategy.first
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
 
 // Test Dependencies
 

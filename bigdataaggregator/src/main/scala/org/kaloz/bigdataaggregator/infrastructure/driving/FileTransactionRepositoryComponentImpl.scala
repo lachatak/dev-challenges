@@ -1,27 +1,26 @@
 package org.kaloz.bigdataaggregator.infrastructure.driving
 
 import org.kaloz.bigdataaggregator.Domain._
-import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.Transaction
+import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.{ExchangeRate, Transaction}
 
 import scala.io.Source
 import scala.util.Success
 
 trait FileTransactionRepositoryComponentImpl extends TransactionRepositoryComponent {
 
-  class FileTransactionRepositoryImpl(transactionFileName: String = "transactions.csv") extends TransactionRepository with FromFile {
+  class FileTransactionRepositoryImpl(transactionFileName: String) extends TransactionRepository with FromFile {
     override def loadTransactions: TransactionFlow =
       fromFile(transactionFileName)
         .map(Transaction(_))
-        .collect {case Success(s) => s}
+        .collect { case Success(s) => s}
   }
 
-  class FileExchangeRateRepositoryImpl(exchangeFileName: String = "exchangerates.csv") extends ExchangeRateRepository with FromFile {
-
-    val EXCHANGE_PATTERN = "(.*),(.*),(.*)".r
+  class FileExchangeRateRepositoryImpl(exchangeFileName: String) extends ExchangeRateRepository with FromFile {
 
     override def loadExchangeRates: ExchangeRates =
       fromFile(exchangeFileName)
-        .collect { case EXCHANGE_PATTERN(from, to, amount) => (from.toUpperCase, to.toUpperCase) -> BigDecimal(amount)}
+        .map(ExchangeRate(_))
+        .collect { case Success(s) => s}
         .foldLeft(Map.empty[(Currency, Currency), Amount])(_ + _)
   }
 

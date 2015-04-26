@@ -73,9 +73,9 @@ class FileTransactionRepositoryComponentImplSpec extends Specification {
 
   private trait scope extends Scope with Mockito with ThrownExpectations with FileTransactionRepositoryComponentImpl {
 
-    val transactionRepository = spy(new FileTransactionRepositoryImpl)
+    val transactionRepository = spy(new FileTransactionRepositoryImpl("NO_FILE"))
 
-    val exchangeRateRepository = spy(new FileExchangeRateRepositoryImpl)
+    val exchangeRateRepository = spy(new FileExchangeRateRepositoryImpl("NO_FILE"))
 
   }
 
