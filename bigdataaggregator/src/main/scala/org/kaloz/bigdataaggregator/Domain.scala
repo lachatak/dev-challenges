@@ -7,21 +7,17 @@ object Domain {
   type Currency = String
   type Partner = String
   type Amount = BigDecimal
+  type Rate = BigDecimal
   type TransactionFlow = Iterator[Transaction]
   type PartnerAmountSummary = Map[Partner, Amount]
-  type ExchangeRate = ((Currency, Currency), Amount)
-  type ExchangeRates = Map[(Currency, Currency), Amount]
+  type ExchangeRate = ((Currency, Currency), Rate)
+  type ExchangeRates = Map[(Currency, Currency), Rate]
 
   case class Transaction(partner: Partner, currency: Currency, amount: Amount = BigDecimal(0)) {
 
-    def |~>(target: Currency)(implicit exchangeRates: ExchangeRates): Option[Amount] = target match {
-      case `currency` => this.amount.some
-      case _ => exchangeRates.get(currency, target).map(_ * this.amount)
-    }
-
-    def ~>(target: Currency)(implicit exchangeRates: ExchangeRates): Option[Transaction] = target match {
-      case `currency` => this.some
-      case _ => exchangeRates.get(currency, target).map(c => copy(amount = this.amount * c, currency = target))
+    def |~>(target: Currency)(implicit exchangeRates: ExchangeRates): Amount = target match {
+      case `currency` => this.amount
+      case _ => exchangeRates(currency, target) * this.amount
     }
   }
 
@@ -42,18 +38,14 @@ object Domain {
   trait TransactionInfo extends Transactions {
     self: TransactionRepositoryComponent with ResultWriterComponent =>
 
-    def sumByPartnerAndCurrency(partner: Partner, currency: Currency): Option[Amount] =
+    def sumByPartnerAndCurrency(partner: Partner, currency: Currency): Amount =
       loadTransactions
         .filter(_.partner == partner)
-        .map(_ |~> currency)
-        .foldLeft(none[Amount])(_ |+| _)
+        .foldLeft(BigDecimal(0))((acc, tr) => acc + (tr |~> currency))
 
-    def sumByCurrency(currency: Currency): Option[PartnerAmountSummary] = {
+    def sumByCurrency(currency: Currency): PartnerAmountSummary = {
       loadTransactions
-        .map(_ ~> currency)
-        .flatten
-        .map(tr => Map(tr.partner -> tr.amount).some)
-        .foldLeft(none[PartnerAmountSummary])((acc, tr) => acc |+| tr) >>= write
+        .foldLeft(Map.empty[Partner, Amount])((acc, tr) => acc |+| Map(tr.partner -> (tr |~> currency)))
     }
   }
 

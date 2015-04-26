@@ -31,14 +31,6 @@ class FileTransactionRepositoryComponentImplSpec extends Specification {
       result.next() must beEqualTo(Transaction("KRS", "GBP", BigDecimal(10.0)))
     }
 
-    "skip producing invalid Transaction" in new scope {
-
-      doReturn(List("INVALID").iterator).when(transactionRepository).fromFile(anyString)
-
-      val result = transactionRepository.loadTransactions
-
-      result must be empty
-    }
   }
 
   "FileExchangeRateRepositoryImpl" should {
@@ -59,15 +51,6 @@ class FileTransactionRepositoryComponentImplSpec extends Specification {
       val result = exchangeRateRepository.loadExchangeRates
 
       result must havePair(("HUF", "GBP") -> BigDecimal(10.0))
-    }
-
-    "skip producing invalid ExchangeRate" in new scope {
-
-      doReturn(List("INVALID").iterator).when(exchangeRateRepository).fromFile(anyString)
-
-      val result = exchangeRateRepository.loadExchangeRates
-
-      result must be empty
     }
   }
 

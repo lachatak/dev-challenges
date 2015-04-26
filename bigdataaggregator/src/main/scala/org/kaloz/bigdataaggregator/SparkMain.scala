@@ -1,40 +1,48 @@
 package org.kaloz.bigdataaggregator
 
 import org.apache.spark.{SparkConf, SparkContext}
-import org.kaloz.bigdataaggregator.Domain.{Currency, Partner}
 import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.{ExchangeRate, Transaction}
-
-import scala.util.Success
 
 object SparkMain extends MainApp {
 
-  process(conf.getString("spark.main.host"), partner, currency)
+  val host = conf.getString("spark.main.host")
 
-  def process(host: String, partner: Partner, currency: Currency) = {
+  benchmark("Spark group results: ", process {
+    sc =>
+      implicit val exchangeRates = sc.textFile(exchangerates)
+        .map(ExchangeRate(_))
+        .collect()
+        .toMap
+
+      sc.textFile(transactions)
+        .map(Transaction(_))
+        .map(tr => (tr.partner, (tr |~> currency)))
+        .reduceByKey(_ + _)
+        .collect()
+        .toMap
+  })
+
+  benchmark("Spark amount results: ", process {
+    sc =>
+      implicit val exchangeRates = sc.textFile(exchangerates)
+        .map(ExchangeRate(_))
+        .collect()
+        .toMap
+
+      sc.textFile(transactions)
+        .map(Transaction(_))
+        .filter(_.partner == partner)
+        .map(_ |~> currency)
+        .fold(BigDecimal(0))(_ + _)
+  })
+
+  def process[T](handler: SparkContext => T): T = {
     val sc = new SparkContext(new SparkConf().setAppName("challenge").setMaster(host).setJars(List(SparkContext.jarOfClass(this.getClass).get)))
-
     try {
-      benchmark("Spark results: ", parse(sc, partner, currency))
+      handler(sc)
     } finally {
       sc.stop
     }
-  }
-
-  def parse(sc: SparkContext, partner: Partner, target: Currency) = {
-
-    implicit val exchangeRates = sc.textFile(exchangerates)
-      .map(ExchangeRate(_))
-      .collect { case Success(s) => s}
-      .collect()
-      .toMap
-
-    sc.textFile(transactions)
-      .map(Transaction(_))
-      .collect { case Success(s) => s ~> currency}
-      .collect { case Some(s) => (s.partner, s.amount)}
-      .reduceByKey(_ + _)
-      .collect()
-      .toMap
   }
 
 }

@@ -10,32 +10,18 @@ class TransactionSpec extends Specification {
 
   "Transaction" should {
 
-    "generate a Success if the transaction is parsable with lowercase currency" in {
+    "generate a Transaction if the transaction is parsable with lowercase currency" in {
 
       val result = Transaction("KRS,gbp,10.0")
 
-      result must beSuccessfulTry(DTransaction("KRS", "GBP", BigDecimal(10.0)))
+      result must beEqualTo(DTransaction("KRS", "GBP", BigDecimal(10.0)))
     }
 
-    "generate a Success if the transaction is parsable" in {
+    "generate a Transaction if the transaction is parsable" in {
 
       val result = Transaction("KRS,GBP,10.0")
 
-      result must beSuccessfulTry(DTransaction("KRS", "GBP", BigDecimal(10.0)))
-    }
-
-    "generate a Failure with ArrayIndexOutOfBoundsException if the transaction cannot be split" in {
-
-      val result = Transaction("INVALID")
-
-      result must beFailedTry.withThrowable[ArrayIndexOutOfBoundsException]
-    }
-
-    "generate a Failure with NumberFormatException if the transaction amount is not number" in {
-
-      val result = Transaction("KRS,GBP,INVALID")
-
-      result must beFailedTry.withThrowable[NumberFormatException]
+      result must beEqualTo(DTransaction("KRS", "GBP", BigDecimal(10.0)))
     }
   }
 }

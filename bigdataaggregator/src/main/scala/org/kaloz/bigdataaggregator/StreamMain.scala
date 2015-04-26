@@ -12,9 +12,7 @@ object StreamMain extends MainApp with TransactionInfo with FileTransactionRepos
 
   val resultWriter = new FileResultWriterImpl(aggregates)
 
-  val result = benchmark("Process time from file -> result to file :", sumByCurrency(currency))
-
-  benchmark("Process time from memory -> result to console :", result.get(partner))
+  benchmark("Process time from file -> result to file :", sumByCurrency(currency))
 
   benchmark("Process time form file -> result to console :", sumByPartnerAndCurrency(partner, currency))
 
