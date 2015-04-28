@@ -35,9 +35,9 @@ Process time form file -> result to console : 44.855s
 krisztian.lachata@GL05152M:bigdataaggregator [master]$ java -jar -Dapp.type=spark target/scala-2.11/bigdataaggregator.jar
 Start processing with app type stream, partner=KRS, currency=GBP, transactions=transactions.csv, exchangerates=exchangerates.csv aggregates=aggregate.csv ...
 Some(Map(4UC4S -> 176822331.488623929706, GZHVT -> 176925240.925915505963, BH2CY -> 176843215.517065683155, FJVL6 -> 177001103.827384237019, KRS -> 176717265.296737444261, 8DYKE -> 176828607.667209633167, XEWSK -> 176839422.731465110378, WUOYP -> 176817384.914996858286, 7CIUR -> 176816128.647459041147, LNP4O -> 177051696.268582293814, GKP6U -> 176799882.728319962430))
-Process time from file -> result to file : 29.51s
+Process time from file -> result to file : 27.602s
 176717265.296737444261
-Process time form file -> result to console : 21.417s
+Process time form file -> result to console : 20.322s
 ```
 If you have a running spark cluster you could pass the URl of the master node as **-Dspark.main.host=spark://HOST:POST**. With this you could extend the processing capacity. For the tests sake it is running in embedded mode.
 ### Technical details ###
