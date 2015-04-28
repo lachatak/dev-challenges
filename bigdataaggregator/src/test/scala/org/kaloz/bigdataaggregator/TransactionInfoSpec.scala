@@ -1,7 +1,8 @@
 package org.kaloz.bigdataaggregator
 
 import org.junit.runner.RunWith
-import org.kaloz.bigdataaggregator.Domain._
+import org.kaloz.bigdataaggregator.domain.Model
+import Model._
 import org.specs2.matcher.ThrownExpectations
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification

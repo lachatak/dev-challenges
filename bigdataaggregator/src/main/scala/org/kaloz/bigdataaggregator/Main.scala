@@ -1,7 +1,8 @@
 package org.kaloz.bigdataaggregator
 
-import org.kaloz.bigdataaggregator.Domain.Transactions
 import org.kaloz.bigdataaggregator.config.{Config, SparkConfig, StreamConfig}
+import org.kaloz.bigdataaggregator.domain.Model.Transactions
+import org.kaloz.bigdataaggregator.infrastructure.driven.benchmark
 
 object Main extends Config with App {
 

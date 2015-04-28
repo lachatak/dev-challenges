@@ -1,33 +1,51 @@
 ## Big Data Aggregator ##
 
 This is my solution for **Dev Challenges** series [Big Data Aggregator](CHALLENGE.md) section.
+There are 2 different implementations under the hood to be able to compare solutions.
 
 ## How to run ##
 ```
 sbt clean assembly
-java -jar target/scala-2.11/bigdataaggregator-assembly-1.0.0.jar partner=KRS currency=GBP trFile=transactions.csv exFile=exchangerates.csv
+java -jar -Dapp.type=stream -Dpartner=KRS -Dcurrency=GBP -Dtransactions=transactions.csv -Dexchange.rates=exchangerates.csv -Daggregates=aggregate.csv target/scala-2.11/bigdataaggregator.jar
 ```
-Any of the parameters can abe omitted. They will be defaulted as it shown.
+Any of the parameters can abe omitted. They will be defaulted from the [application.conf](src/main/resources/application.conf).
 
-### Results ###
+#### Application types ####
+- stream. Uses simple scala file streams
+- spark. Uses spark to process the provided transactions.csv file. This is the default application type
+
+### Results with streams ###
 - 10 randomly generated partner names in the transactions.csv file + 1 for validation which is my name "KRS"
 - 10 cross exchange rates -> 90 items in the currencies.csv file
-- 10.000.000 generated transactions for 10 partners and 10 currencies 
+- 100.000.000 generated transactions for 10 partners and 10 currencies
 ```
-Start processing with partner=KRS, currency=GBP, transactions=transactions.csv, exchangerates=exchangerates.csv ...
-Some(Map(Cj0AT -> 17687007.894836635508, Vnd9d -> 17642585.361019262488, NhI0s -> 17670824.006035535860, xrr0G -> 17702774.485676729032, 36UMO -> 17712700.568250546474, U4Bt5 -> 17660737.336327469313, KRS -> 17716558.433476505763, aGrgU -> 17707874.304117732802, hyzKM -> 17719373.257142058751, DIC4e -> 17667957.933976776286, aHW5r -> 17672595.781572634203))
-Process time from file -> result to file: 9.24s
-17716558.433476505763
-Process time from memory -> result to console: 0.0s
-Some(17716558.433476505763)
-Process time form file -> result to console: 4.031s
+krisztian.lachata@GL05152M:bigdataaggregator [master]$ java -jar -Dapp.type=stream target/scala-2.11/bigdataaggregator.jar
+Start processing with app type stream, partner=KRS, currency=GBP, transactions=transactions.csv, exchangerates=exchangerates.csv aggregates=aggregate.csv ...
+Some(Map(4UC4S -> 176822331.488623929706, GZHVT -> 176925240.925915505963, BH2CY -> 176843215.517065683155, FJVL6 -> 177001103.827384237019, KRS -> 176717265.296737444261, 8DYKE -> 176828607.667209633167, XEWSK -> 176839422.731465110378, WUOYP -> 176817384.914996858286, 7CIUR -> 176816128.647459041147, LNP4O -> 177051696.268582293814, GKP6U -> 176799882.728319962430))
+Process time from file -> result to file : 88.078s
+176717265.296737444261
+Process time form file -> result to console : 44.855s
 ```
 
+### Results with Spark ###
+- 10 randomly generated partner names in the transactions.csv file + 1 for validation which is my name "KRS"
+- 10 cross exchange rates -> 90 items in the currencies.csv file
+- 100.000.000 generated transactions for 10 partners and 10 currencies
+```
+krisztian.lachata@GL05152M:bigdataaggregator [master]$ java -jar -Dapp.type=spark target/scala-2.11/bigdataaggregator.jar
+Start processing with app type stream, partner=KRS, currency=GBP, transactions=transactions.csv, exchangerates=exchangerates.csv aggregates=aggregate.csv ...
+Some(Map(4UC4S -> 176822331.488623929706, GZHVT -> 176925240.925915505963, BH2CY -> 176843215.517065683155, FJVL6 -> 177001103.827384237019, KRS -> 176717265.296737444261, 8DYKE -> 176828607.667209633167, XEWSK -> 176839422.731465110378, WUOYP -> 176817384.914996858286, 7CIUR -> 176816128.647459041147, LNP4O -> 177051696.268582293814, GKP6U -> 176799882.728319962430))
+Process time from file -> result to file : 29.51s
+176717265.296737444261
+Process time form file -> result to console : 21.417s
+```
+If you have a running spark cluster you could pass the URl of the master node as **-Dhost=spark://HOST:POST** Whith this you could extend the processing capacity. For the tests sake it is running in embedded mode.
 ### Technical details ###
 - scala 2.11.4
 - sbt 0.13.5
 - scalaz 7.1.0
 - [cake pattern](http://jonasboner.com/2008/10/06/real-world-scala-dependency-injection-di/) dependency injection for scala
+- [Spark](http://spark.apache.org/docs/latest/index.html) for cluster computing transaction file
 - Domain Driven Design. Separated infrastructure/app/domain layers implemented in scala
 - [Scala spec2](https://etorreborre.github.io/specs2/guide/SPECS2-3.5/org.specs2.guide.UserGuide.html) for testing
 - Input validation. Invalid transaction or currency doesn't break the calculation
@@ -36,7 +54,8 @@ Process time form file -> result to console: 4.031s
   type Currency = String
   type Partner = String
   type Amount = BigDecimal
-  type TransactionFlow = Iterator[Transaction]
+  type Rate = BigDecimal
   type PartnerAmountSummary = Map[Partner, Amount]
-  type ExchangeRates = Map[(Currency, Currency), Amount]
+  type ExchangeRate = ((Currency, Currency), Rate)
+  type ExchangeRates = Map[(Currency, Currency), Rate]
 ```

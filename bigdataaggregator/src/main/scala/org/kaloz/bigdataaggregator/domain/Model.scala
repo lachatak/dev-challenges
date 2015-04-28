@@ -1,8 +1,8 @@
-package org.kaloz.bigdataaggregator
+package org.kaloz.bigdataaggregator.domain
 
 import scalaz.Scalaz._
 
-object Domain {
+object Model {
 
   type Currency = String
   type Partner = String
@@ -28,36 +28,5 @@ object Domain {
     def sumByPartnerAndCurrency(partner: Partner, currency: Currency): Amount = transactionRepository.loadTransactionsSumByPartnerAndCurrency(partner, currency)
   }
 
-  trait TransactionRepositoryComponent {
-
-    def transactionRepository: TransactionRepository
-
-    trait TransactionRepository {
-      def loadTransactionsSumByCurrency(currency: Currency): Option[PartnerAmountSummary]
-
-      def loadTransactionsSumByPartnerAndCurrency(partner: Partner, currency: Currency): Amount
-    }
-
-  }
-
-  trait ExchangeRateRepositoryComponent {
-
-    def exchangeRateRepository: ExchangeRateRepository
-
-    trait ExchangeRateRepository {
-      def loadExchangeRates: ExchangeRates
-    }
-
-  }
-
-  trait ResultWriterComponent {
-
-    def resultWriter: ResultWriter
-
-    trait ResultWriter {
-      def write(result: PartnerAmountSummary): Option[PartnerAmountSummary]
-    }
-
-  }
-
 }
+

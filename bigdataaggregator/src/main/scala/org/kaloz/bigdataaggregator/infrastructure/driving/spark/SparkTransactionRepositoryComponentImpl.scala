@@ -1,7 +1,8 @@
-package org.kaloz.bigdataaggregator.infrastructure.driving
+package org.kaloz.bigdataaggregator.infrastructure.driving.spark
 
 import org.apache.spark.{SparkConf, SparkContext}
-import org.kaloz.bigdataaggregator.Domain._
+import org.kaloz.bigdataaggregator.domain.Model._
+import org.kaloz.bigdataaggregator.domain.TransactionRepositoryComponent
 import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.{ExchangeRate, Transaction}
 
 trait SparkTransactionRepositoryComponentImpl extends TransactionRepositoryComponent {
@@ -10,16 +11,21 @@ trait SparkTransactionRepositoryComponentImpl extends TransactionRepositoryCompo
 
   class SparkTransactionRepositoryImpl(transactionFileName: String, exchangeFileName: String) extends TransactionRepository {
 
-    override def loadTransactionsSumByCurrency(currency: Currency): Option[PartnerAmountSummary] = {
-      process(currency, "") {
-        (sc, currency, partner) =>
-          implicit val rates = sc.textFile(exchangeFileName)
-            .map(ExchangeRate(_))
+    val rates =
+      fromSpark() {
+        (sc, currency, partner, rates) =>
+          sc.textFile(exchangeFileName)
+            .flatMap(ExchangeRate(_))
             .collect
             .toMap
+      }
 
+    override def loadTransactionsSumByCurrency(currency: Currency): Option[PartnerAmountSummary] = {
+      fromSpark(currency) {
+        (sc, currency, partner, rates) =>
+          implicit val r = rates
           sc.textFile(transactionFileName)
-            .map(Transaction(_))
+            .flatMap(Transaction(_))
             .map(tr => (tr.partner, tr |~> currency))
             .reduceByKey(_ + _)
             .collect
@@ -31,22 +37,18 @@ trait SparkTransactionRepositoryComponentImpl extends TransactionRepositoryCompo
     }
 
     override def loadTransactionsSumByPartnerAndCurrency(partner: Partner, currency: Currency): Amount = {
-      process(currency, partner) {
-        (sc, currency, partner) =>
-          implicit val rates = sc.textFile(exchangeFileName)
-            .map(ExchangeRate(_))
-            .collect()
-            .toMap
-
+      fromSpark(currency, partner) {
+        (sc, currency, partner, rates) =>
+          implicit val r = rates
           sc.textFile(transactionFileName)
-            .map(Transaction(_))
+            .flatMap(Transaction(_))
             .filter(_.partner == partner)
             .map(_ |~> currency)
             .fold(BigDecimal(0))(_ + _)
       }
     }
 
-    def process[T](currency: Currency, partner: Partner)(handler: (SparkContext, Currency, Partner) => T): T = {
+    def fromSpark[T](currency: Currency = "", partner: Partner = "")(handler: (SparkContext, Currency, Partner, ExchangeRates) => T): T = {
       val sparkConf: SparkConf = new SparkConf()
         .setAppName("bigdataaggregator")
         .setMaster(host)
@@ -57,11 +59,12 @@ trait SparkTransactionRepositoryComponentImpl extends TransactionRepositoryCompo
       val sc = new SparkContext(sparkConf)
 
       try {
-        handler(sc, currency, partner)
+        handler(sc, currency, partner, rates)
       } finally {
         sc.stop
       }
     }
   }
+
 }
 

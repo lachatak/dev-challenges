@@ -1,6 +1,6 @@
-package org.kaloz
+package org.kaloz.bigdataaggregator.infrastructure
 
-package object bigdataaggregator {
+package object driven {
 
   def benchmark[T](log: String, block: => T): T = {
     val startTime = System.currentTimeMillis()

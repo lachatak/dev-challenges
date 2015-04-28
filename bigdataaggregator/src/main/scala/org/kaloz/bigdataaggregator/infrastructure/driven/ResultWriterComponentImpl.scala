@@ -2,7 +2,8 @@ package org.kaloz.bigdataaggregator.infrastructure.driven
 
 import java.io.{File, FileOutputStream, PrintWriter}
 
-import org.kaloz.bigdataaggregator.Domain.{PartnerAmountSummary, ResultWriterComponent}
+import org.kaloz.bigdataaggregator.domain.Model.PartnerAmountSummary
+import org.kaloz.bigdataaggregator.domain.ResultWriterComponent
 
 import scalaz.Scalaz._
 

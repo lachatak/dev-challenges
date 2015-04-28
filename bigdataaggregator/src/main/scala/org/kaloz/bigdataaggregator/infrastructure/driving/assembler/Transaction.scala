@@ -1,12 +1,17 @@
 package org.kaloz.bigdataaggregator.infrastructure.driving.assembler
 
-import org.kaloz.bigdataaggregator.Domain.{Transaction => DTransaction}
+import org.kaloz.bigdataaggregator.domain.Model.{Transaction => DTransaction}
 
 import scala.math.BigDecimal
 
 object Transaction {
-  def apply(tr: String): DTransaction = {
-    val token = tr.split(",").map(_.trim.toUpperCase)
-    DTransaction(token(0), token(1), BigDecimal(token(2)))
+  def apply(tr: String): Option[DTransaction] = {
+    try {
+      val token = tr.split(",").map(_.trim.toUpperCase)
+      Some(DTransaction(token(0), token(1), BigDecimal(token(2))))
+    }
+    catch {
+      case ex: Exception => None
+    }
   }
 }
