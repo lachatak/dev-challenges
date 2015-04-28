@@ -39,7 +39,7 @@ Process time from file -> result to file : 29.51s
 176717265.296737444261
 Process time form file -> result to console : 21.417s
 ```
-If you have a running spark cluster you could pass the URl of the master node as **-Dhost=spark://HOST:POST** Whith this you could extend the processing capacity. For the tests sake it is running in embedded mode.
+If you have a running spark cluster you could pass the URl of the master node as **-Dspark.main.host=spark://HOST:POST**. With this you could extend the processing capacity. For the tests sake it is running in embedded mode.
 ### Technical details ###
 - scala 2.11.4
 - sbt 0.13.5
