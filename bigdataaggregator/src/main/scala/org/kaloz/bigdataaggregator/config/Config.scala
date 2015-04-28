@@ -1,9 +1,8 @@
-package org.kaloz.bigdataaggregator
+package org.kaloz.bigdataaggregator.config
 
 import com.typesafe.config.ConfigFactory
 
-
-trait MainApp extends App {
+trait Config {
 
   val conf = ConfigFactory.load()
 
@@ -13,5 +12,4 @@ trait MainApp extends App {
   val exchangerates = conf.getString("exchange.rates")
   val aggregates = conf.getString("aggregates")
 
-  println(s"Start processing with partner=$partner, currency=$currency, transactions=$transactions, exchangerates=$exchangerates aggregates=$aggregates ...")
 }

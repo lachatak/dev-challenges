@@ -8,7 +8,6 @@ object Domain {
   type Partner = String
   type Amount = BigDecimal
   type Rate = BigDecimal
-  type TransactionFlow = Iterator[Transaction]
   type PartnerAmountSummary = Map[Partner, Amount]
   type ExchangeRate = ((Currency, Currency), Rate)
   type ExchangeRates = Map[(Currency, Currency), Rate]
@@ -17,47 +16,33 @@ object Domain {
 
     def |~>(target: Currency)(implicit exchangeRates: ExchangeRates): Amount = target match {
       case `currency` => this.amount
-      case _ => exchangeRates(currency, target) * this.amount
+      case _ => exchangeRates.getOrElse((currency, target), BigDecimal(0)) * this.amount
     }
   }
 
-  trait Transactions {
+  class Transactions {
     self: TransactionRepositoryComponent with ResultWriterComponent =>
 
-    implicit lazy val exchangeRates = exchangeRateRepository.loadExchangeRates
+    def sumByCurrency(currency: Currency): Option[PartnerAmountSummary] = transactionRepository.loadTransactionsSumByCurrency(currency) >>= resultWriter.write
 
-    def loadTransactions: TransactionFlow = {
-      transactionRepository.loadTransactions
-    }
-
-    def write(result: PartnerAmountSummary): Option[PartnerAmountSummary] = {
-      resultWriter.write(result)
-    }
-  }
-
-  trait TransactionInfo extends Transactions {
-    self: TransactionRepositoryComponent with ResultWriterComponent =>
-
-    def sumByPartnerAndCurrency(partner: Partner, currency: Currency): Amount =
-      loadTransactions
-        .filter(_.partner == partner)
-        .foldLeft(BigDecimal(0))((acc, tr) => acc + (tr |~> currency))
-
-    def sumByCurrency(currency: Currency): PartnerAmountSummary = {
-      loadTransactions
-        .foldLeft(Map.empty[Partner, Amount])((acc, tr) => acc |+| Map(tr.partner -> (tr |~> currency)))
-    }
+    def sumByPartnerAndCurrency(partner: Partner, currency: Currency): Amount = transactionRepository.loadTransactionsSumByPartnerAndCurrency(partner, currency)
   }
 
   trait TransactionRepositoryComponent {
 
     def transactionRepository: TransactionRepository
 
-    def exchangeRateRepository: ExchangeRateRepository
-
     trait TransactionRepository {
-      def loadTransactions: TransactionFlow
+      def loadTransactionsSumByCurrency(currency: Currency): Option[PartnerAmountSummary]
+
+      def loadTransactionsSumByPartnerAndCurrency(partner: Partner, currency: Currency): Amount
     }
+
+  }
+
+  trait ExchangeRateRepositoryComponent {
+
+    def exchangeRateRepository: ExchangeRateRepository
 
     trait ExchangeRateRepository {
       def loadExchangeRates: ExchangeRates

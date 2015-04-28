@@ -10,7 +10,7 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
 javacOptions ++= Seq("-Xlint:deprecation", "-encoding", "utf8", "-XX:MaxPermSize=256M")
 
-mainClass in assembly := Some("org.kaloz.bigdataaggregator.SparkMain")
+mainClass in assembly := Some("org.kaloz.bigdataaggregator.Main")
 
 assemblyJarName in assembly := "bigdataaggregator.jar"
 

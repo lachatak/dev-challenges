@@ -1,32 +1,28 @@
 package org.kaloz.bigdataaggregator.infrastructure.driving
 
 import org.kaloz.bigdataaggregator.Domain._
-import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.{ExchangeRate, Transaction}
+import org.kaloz.bigdataaggregator.infrastructure.driving.assembler.Transaction
 
-import scala.io.Source
+import scalaz.Scalaz._
 
-trait FileTransactionRepositoryComponentImpl extends TransactionRepositoryComponent {
+trait FileTransactionRepositoryComponentImpl extends TransactionRepositoryComponent with ExchangeRateRepositoryComponent {
+
+  implicit lazy val exchangeRates = exchangeRateRepository.loadExchangeRates
 
   class FileTransactionRepositoryImpl(transactionFileName: String) extends TransactionRepository with FromFile {
-    override def loadTransactions: TransactionFlow =
+    override def loadTransactionsSumByCurrency(currency: Currency): Option[PartnerAmountSummary] =
       fromFile(transactionFileName)
         .map(Transaction(_))
-  }
+        .foldLeft(Map.empty[Partner, Amount])((acc, tr) => acc |+| Map(tr.partner -> (tr |~> currency))) match {
+        case m: Map[Partner, Amount] if m.isEmpty => None
+        case m => m.some
+      }
 
-  class FileExchangeRateRepositoryImpl(exchangeFileName: String) extends ExchangeRateRepository with FromFile {
-
-    override def loadExchangeRates: ExchangeRates =
-      fromFile(exchangeFileName)
-        .map(ExchangeRate(_))
-        .foldLeft(Map.empty[(Currency, Currency), Amount])(_ + _)
-  }
-
-  trait FromFile {
-    def fromFile(transactionFileName: String): Iterator[String] = {
-      Source
-        .fromFile(transactionFileName)
-        .getLines()
-    }
+    override def loadTransactionsSumByPartnerAndCurrency(partner: Partner, currency: Currency): Amount =
+      fromFile(transactionFileName)
+        .map(Transaction(_))
+        .filter(_.partner == partner)
+        .foldLeft(BigDecimal(0))((acc, tr) => acc + (tr |~> currency))
   }
 
 }
