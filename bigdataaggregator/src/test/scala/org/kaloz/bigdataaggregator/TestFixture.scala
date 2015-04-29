@@ -19,7 +19,7 @@ object TestFixture extends App {
     println(s"Generation Time: ${(System.currentTimeMillis() - startTime) / 1000.00}s")
   }
 
-  def createTransactionsFile(fileName: String = "transactions.csv", numOfPartners: Int = 10, numOfTransactions: Int = 1000 * 1000 * 10) {
+  def createTransactionsFile(fileName: String = "transactions.csv", numOfPartners: Int = 10, numOfTransactions: Int = 1000 * 1000 * 100) {
 
     val currencies = List("USD", "EUR", "GBP", "AUD", "JPY", "RUB", "CHF", "HUF", "PLN", "SEK")
     val partners = "KRS" :: List.fill(numOfPartners)(Random.alphanumeric.take(5).mkString)

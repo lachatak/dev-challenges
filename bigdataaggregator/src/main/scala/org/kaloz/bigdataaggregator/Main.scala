@@ -1,35 +1,22 @@
 package org.kaloz.bigdataaggregator
 
-import org.kaloz.bigdataaggregator.Domain._
-import org.kaloz.bigdataaggregator.infrastructure.driven.ResultWriterComponentImpl
-import org.kaloz.bigdataaggregator.infrastructure.driving.FileTransactionRepositoryComponentImpl
+import org.kaloz.bigdataaggregator.config.{Config, SparkConfig, StreamConfig}
+import org.kaloz.bigdataaggregator.domain.Model.Transactions
+import org.kaloz.bigdataaggregator.infrastructure.driven.benchmark
 
-import scala.collection.breakOut
+object Main extends Config with App {
 
-object Main extends App with TransactionInfo with FileTransactionRepositoryComponentImpl with ResultWriterComponentImpl {
+  val appType = conf.getString("app.type")
 
-  val parsedArgs = parseArgs(args)
+  println(s"Start processing with app type $appType, partner=$partner, currency=$currency, transactions=$transactions, exchangerates=$exchangerates aggregates=$aggregates ...")
 
-  val partner = parsedArgs.getOrElse("partner", "KRS")
-  val currency = parsedArgs.getOrElse("currency", "GBP")
-  val transactions = parsedArgs.getOrElse("trFile", "transactions.csv")
-  val exchangerates = parsedArgs.getOrElse("exFile", "exchangerates.csv")
+  val transactionsApp = appType match {
+    case "spark" => new Transactions with SparkConfig
+    case "stream" => new Transactions with StreamConfig
+  }
 
-  println(s"Start processing with partner=$partner, currency=$currency, transactions=$transactions, exchangerates=$exchangerates ...")
+  benchmark("Process time from file -> result to file :", transactionsApp.sumByCurrency(currency))
 
-  val transactionRepository = new FileTransactionRepositoryImpl(transactions)
-
-  val exchangeRateRepository = new FileExchangeRateRepositoryImpl(exchangerates)
-
-  val resultWriter = new FileResultWriterImpl()
-
-  val result = benchmark("Process time from file -> result to file :", sumByCurrency(currency))
-  println(result)
-
-  val mem = benchmark("Process time from memory -> result to console :", result.get(partner))
-  println(mem)
-
-  val sum = benchmark("Process time form file -> result to console :",sumByPartnerAndCurrency(partner, currency))
-  println(sum)
+  benchmark("Process time form file -> result to console :", transactionsApp.sumByPartnerAndCurrency(partner, currency))
 
 }
