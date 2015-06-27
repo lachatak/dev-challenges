@@ -39,15 +39,15 @@ To simulate CPU-intensive work at the workers simply run a fixed-length for-loop
 ```json
  {"type":"wheel", "serialnumber": 4566767, faulty: "true"}
 ```
-#### coachwork #### 
+#### coachwork
 ```json
  {"type":"coachwork", "serialnumber": 657069978, faulty: "false"}
 ```
-#### engine ####
+#### engine
 ```json
  {"type":"engine", "serialnumber": 75072345, faulty: "true"}
 ```
-#### car ####
+#### car
 ```json
 {
  "wheel": [
