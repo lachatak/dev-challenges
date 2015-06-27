@@ -64,4 +64,3 @@ Try to focus on the main task but if you feel the energy you could potentially i
 - Make the production line online configurable
 - Track production line activity using some persistence solution
 - Deploy the solution to the cloud
-- 
