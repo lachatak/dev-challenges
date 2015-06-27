@@ -1,6 +1,6 @@
-##Challenge 3 - Parallel programming##
+## Challenge 3 - Parallel programming ##
 Multi-core leveraging programming styles, languages and frameworks are the rage nowadays, and developers can choose from a pool of radically different solutions. Let's play with them by solving a simple problem with different approaches!
-##The Challenge##
+## The Challenge ##
 The task is to ***simulate a car factory*** that has multiple, independent workers connected to each other by conveyor belts. The stages of the process:
 The Factory has ***3 in-queues***, one for engines, one for coachworks and one for wheels arriving into the Factory continuously. 
 - Workers to ***filter out the faulty parts*** operate on each in-queue.
@@ -11,7 +11,7 @@ The Challenge is (minor) part a modelling task, (major) part a parallel programm
 **The aim is to maximize the number of cars produced in a fixed amount of time.**
 
 ![Alt text](pics/DevChallengeCarFactory.jpg?raw=true "CarFactory")
-###Workers### 
+### Workers ### 
 - WS-FE: filters out faulty engines. Only "healthy" ones are let trough.
 - WS-FC: filters out faulty coachworks
 - WS-FW: filters out faulty wheels
@@ -27,17 +27,16 @@ For the simulation you should implement the following as concurrent, independent
 - a Consumer that will consume the cars rolling out of the Factory and keeps counting them to measure the throughput of the Factory
 - 3 Providers to supply continuous streams of engines, wheels and coachworks, respectively
 
-##Hints##
+## Hints ##
 the domain model of the factory (Engine, Wheel, Coachwork, Car, Workers) should be as simple as possible as they only provide the pretext for the challenge. Faulty parts could be simply marked with a flag and painting could be simply setting a field. The emphasis should be on the parallelization. The chosen approach (see next section) will probably heavily influence the model.
 To simulate CPU-intensive work at the workers simply run a fixed-length for-loop to increment a number.
-###An example Domain###
+### An example Domain ###
 (Yielding to the public demand) Just to demonstrate the idea here is an example model in json 
 - wheel: {"type":"wheel", "serialnumber": 4566767, faulty: "true"}
 - coachwork: {"type":"coachwork", "serialnumber": 657069978, faulty: "false"}
 - engine: {"type":"engine", "serialnumber": 75072345, faulty: "true"}
 - car
-- 
-###Car###
+### Car ###
 ```json
 {"wheel": {"type":"wheel", "serialnumber": 4566767},
  "coachwork": {"type":"coachwork", "serialnumber": 657069978},
@@ -45,12 +44,12 @@ To simulate CPU-intensive work at the workers simply run a fixed-length for-loop
  "serialnumber": 3245554,
  "color": "blue"
 ```
-##Possible approaches/technologies to use##
+## Possible approaches/technologies to use ##
 This problem can be tackled using very different approaches providing an opportunity to compare various styles. Some examples are mentioned below. If you are familiar with either of those, it's not difficult to implement. If you find it too easy or quick, we'd advise you to do it with multiple approaches and compare themas completely different models could emerge. In a CSP or queue-based solution the conveyor belts will be as much as building blocks of the model as the workers. In case of FRP (streams) the workers might simply be stream operations and the conveyor belts are the model's first-class citizens. In an Actor framework the emphasis is on the workers, which send messages to each other, eliminating the notion of conveyors completely.
 - CSP (Communicating sequential processes): e.g. Go, Clojure, Java CSP, ...
 - Actor model: e.g. Akka (Scala/Java)
 - Dataflow Programming/Reactive Programming: e.g. Scala/Java 8 streams, RxJava/RxScala/RxClojure/RxJS/...
 - Fork-Join framework of Java 7
 
-##Caveats##
+## Caveats ##
 The Factory should be prepared for high load. What if parts coming faster than it can process them (4 wheels for one car)?
