@@ -50,7 +50,7 @@ To simulate CPU-intensive work at the workers simply run a fixed-length for-loop
 #### car
 ```json
 {
- "wheel": [
+ "wheels": [
   {"serialnumber": 4566767},
   {"serialnumber": 4566768},
   {"serialnumber": 4566769}, 
