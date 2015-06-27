@@ -55,3 +55,13 @@ This problem can be tackled using very different approaches providing an opportu
 
 ## Caveats ##
 The Factory should be prepared for high load. What if parts coming faster than it can process them (4 wheels for one car)?
+
+## Optional tasks ##
+Try to focus on the main task but if you feel the energy you could potentially implement the following stretch goals:
+- Implement workstations to be a separate runnable artifact communicating via some remote protocol (akka, jms)
+- Dockerize the solution
+- Provide UI to be able to monitor the production line
+- Make the production line online configurable
+- Track production line activity using some persistence solution
+- Deploy the solution to the cloud
+- 
