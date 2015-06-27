@@ -40,11 +40,18 @@ To simulate CPU-intensive work at the workers simply run a fixed-length for-loop
 
 ### Car ###
 ```json
-{"wheel": {"type":"wheel", "serialnumber": 4566767},
- "coachwork": {"type":"coachwork", "serialnumber": 657069978},
- "engine": {"type":"engine", "serialnumber": 75072345},
+{
+ "wheel": [
+  {"serialnumber": 4566767},
+  {"serialnumber": 4566768},
+  {"serialnumber": 4566769}, 
+  {"serialnumber": 4566770}
+  ],
+ "coachwork": {"serialnumber": 657069978},
+ "engine": {"serialnumber": 75072345},
  "serialnumber": 3245554,
  "color": "blue"
+}
 ```
 ## Possible approaches/technologies to use ##
 This problem can be tackled using very different approaches providing an opportunity to compare various styles. Some examples are mentioned below. If you are familiar with either of those, it's not difficult to implement. If you find it too easy or quick, we'd advise you to do it with multiple approaches and compare themas completely different models could emerge. In a CSP or queue-based solution the conveyor belts will be as much as building blocks of the model as the workers. In case of FRP (streams) the workers might simply be stream operations and the conveyor belts are the model's first-class citizens. In an Actor framework the emphasis is on the workers, which send messages to each other, eliminating the notion of conveyors completely.
