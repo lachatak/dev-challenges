@@ -33,12 +33,22 @@ the domain model of the factory (Engine, Wheel, Coachwork, Car, Workers) should 
 To simulate CPU-intensive work at the workers simply run a fixed-length for-loop to increment a number.
 ### An example Domain ###
 (Yielding to the public demand) Just to demonstrate the idea here is an example model in json 
-- wheel: {"type":"wheel", "serialnumber": 4566767, faulty: "true"}
-- coachwork: {"type":"coachwork", "serialnumber": 657069978, faulty: "false"}
-- engine: {"type":"engine", "serialnumber": 75072345, faulty: "true"}
-- car
+#### wheel #### 
+```json
+ {"type":"wheel", "serialnumber": 4566767, faulty: "true"}
+```
 
-### Car ###
+#### coachwork #### 
+```json
+ {"type":"coachwork", "serialnumber": 657069978, faulty: "false"}
+```
+
+#### engine ####
+```json
+ {"type":"engine", "serialnumber": 75072345, faulty: "true"}
+```
+
+#### Car ####
 ```json
 {
  "wheel": [
