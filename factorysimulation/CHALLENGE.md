@@ -35,7 +35,7 @@ To simulate CPU-intensive work at the workers simply run a fixed-length for-loop
 ### An example Domain ###
 (Yielding to the public demand) Just to demonstrate the idea here is an example model in json 
 
-#### wheel #### 
+#### wheel
 ```json
  {"type":"wheel", "serialnumber": 4566767, faulty: "true"}
 ```
