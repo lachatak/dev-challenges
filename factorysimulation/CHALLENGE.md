@@ -31,6 +31,7 @@ For the simulation you should implement the following as concurrent, independent
 ## Hints ##
 the domain model of the factory (Engine, Wheel, Coachwork, Car, Workers) should be as simple as possible as they only provide the pretext for the challenge. Faulty parts could be simply marked with a flag and painting could be simply setting a field. The emphasis should be on the parallelization. The chosen approach (see next section) will probably heavily influence the model.
 To simulate CPU-intensive work at the workers simply run a fixed-length for-loop to increment a number.
+
 ### An example Domain ###
 (Yielding to the public demand) Just to demonstrate the idea here is an example model in json 
 
@@ -49,7 +50,7 @@ To simulate CPU-intensive work at the workers simply run a fixed-length for-loop
  {"type":"engine", "serialnumber": 75072345, faulty: "true"}
 ```
 
-#### Car ####
+#### car ####
 ```json
 {
  "wheel": [
