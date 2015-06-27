@@ -11,7 +11,8 @@ The Challenge is (minor) part a modelling task, (major) part a parallel programm
 **The aim is to maximize the number of cars produced in a fixed amount of time.**
 
 ![Alt text](pics/DevChallengeCarFactory.jpg?raw=true "CarFactory")
-### Workers ### 
+### Workers ###
+
 - WS-FE: filters out faulty engines. Only "healthy" ones are let trough.
 - WS-FC: filters out faulty coachworks
 - WS-FW: filters out faulty wheels
@@ -36,6 +37,7 @@ To simulate CPU-intensive work at the workers simply run a fixed-length for-loop
 - coachwork: {"type":"coachwork", "serialnumber": 657069978, faulty: "false"}
 - engine: {"type":"engine", "serialnumber": 75072345, faulty: "true"}
 - car
+
 ### Car ###
 ```json
 {"wheel": {"type":"wheel", "serialnumber": 4566767},
