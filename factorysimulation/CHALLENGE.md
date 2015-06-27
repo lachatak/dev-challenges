@@ -1,26 +1,27 @@
 ##Challenge 3 - Parallel programming##
 Multi-core leveraging programming styles, languages and frameworks are the rage nowadays, and developers can choose from a pool of radically different solutions. Let's play with them by solving a simple problem with different approaches!
 ##The Challenge##
-The task is to simulate a car factory that has multiple, independent workers connected to each other by conveyor belts. The stages of the process:
-The Factory has 3 in-queues, one for engines, one for coachworks and one for wheels arriving into the Factory continuously.
-workers to filter out the faulty parts operate on each in-queue.
-The intact parts are carried further on conveyor belts to a worker that assembles a car from each 'coachwork + engine + 4 wheels' combination.
-The cars then are then moved to a worker that randomly puts each onto one of the conveyor belts towards 3 painter workers.
-Finally all the conveyors from the painter stations ebb into one, the out-queue of the factory.
-The Challenge is (minor) part a modelling task, (major) part a parallel programming exercise. All the workers work independently and leveraging the parallel nature of the factory-process higher throughput is achievable than with a sequential solution. The aim is to maximize the number of cars produced in a fixed amount of time.
+The task is to ***simulate a car factory*** that has multiple, independent workers connected to each other by conveyor belts. The stages of the process:
+The Factory has ***3 in-queues***, one for engines, one for coachworks and one for wheels arriving into the Factory continuously. 
+- Workers to ***filter out the faulty parts*** operate on each in-queue.
+- The intact parts are carried further on conveyor belts to a worker that assembles a car from each 'coachwork + engine + 4 wheels' combination. 
+- The cars then are then moved to a worker that ***randomly puts each onto one of the conveyor belts*** towards 3 painter workers.
+- Finally ***all the conveyors from the painter stations ebb into one***, the out-queue of the factory.
+The Challenge is (minor) part a modelling task, (major) part a parallel programming exercise. All the workers work independently and leveraging the parallel nature of the factory-process higher throughput is achievable than with a sequential solution. 
+**The aim is to maximize the number of cars produced in a fixed amount of time.**
 
 ![Alt text](pics/DevChallengeCarFactory.jpg?raw=true "CarFactory")
- 
-Workers 
-WS-FE: filters out faulty engines. Only "healthy" ones are let trough.
-WS-FC: filters out faulty coachworks
-WS-FW: filters out faulty wheels
-W-CA: assembles cars from each 'coachwork + engine + 4 wheels' combination
-W-S: puts incoming cars on a random out-queue
-W-PR: paints cars to red
-W-PB: paints cars to blue
-W-PG: paints cars to green
-W-M: merges the 3 conveyor belts into one
+###Workers### 
+- WS-FE: filters out faulty engines. Only "healthy" ones are let trough.
+- WS-FC: filters out faulty coachworks
+- WS-FW: filters out faulty wheels
+- W-CA: assembles cars from each 'coachwork + engine + 4 wheels' combination
+- W-S: puts incoming cars on a random out-queue
+- W-PR: paints cars to red
+- W-PB: paints cars to blue
+- W-PG: paints cars to green
+- W-M: merges the 3 conveyor belts into one
+
 For the simulation you should implement the following as concurrent, independent processes
 - the Factory, obviously
 - a Consumer that will consume the cars rolling out of the Factory and keeps counting them to measure the throughput of the Factory
@@ -35,6 +36,7 @@ To simulate CPU-intensive work at the workers simply run a fixed-length for-loop
 - coachwork: {"type":"coachwork", "serialnumber": 657069978, faulty: "false"}
 - engine: {"type":"engine", "serialnumber": 75072345, faulty: "true"}
 - car
+- 
 ###Car###
 ```json
 {"wheel": {"type":"wheel", "serialnumber": 4566767},
