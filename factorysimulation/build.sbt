@@ -10,18 +10,21 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
 javacOptions ++= Seq("-Xlint:deprecation", "-encoding", "utf8")
 
-mainClass in assembly := Some("org.kaloz.factorysimulation.Main")
+mainClass in assembly := Some("org.kaloz.factorysimulation.SimpleFlowGraphFactoryMain")
 
 assemblyJarName in assembly := "factorysimulation.jar"
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % "7.1.1",
-  "com.typesafe.akka" %% "akka-actor" % "2.3.11"
+  "com.typesafe.akka" %% "akka-actor" % "2.3.11",
+  "com.typesafe.akka" %% "akka-stream-experimental" % "1.0-RC4",
+  "com.typesafe.akka" %% "akka-http-core-experimental" % "1.0-RC4",
+  "com.typesafe.akka" %% "akka-http-experimental" % "1.0-RC4"
 )
 
 assemblyMergeStrategy in assembly := {
   case x if x.endsWith("UnusedStubClass.class") => MergeStrategy.first
-  case PathList("com", "google", xs @ _*) => MergeStrategy.first
+  case PathList("com", "google", xs@_*) => MergeStrategy.first
   case x =>
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
