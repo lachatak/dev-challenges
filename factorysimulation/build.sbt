@@ -16,10 +16,13 @@ assemblyJarName in assembly := "factorysimulation.jar"
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % "7.1.1",
+  "org.apache.commons" % "commons-lang3" % "3.0",
   "com.typesafe.akka" %% "akka-actor" % "2.3.11",
   "com.typesafe.akka" %% "akka-stream-experimental" % "1.0-RC4",
   "com.typesafe.akka" %% "akka-http-core-experimental" % "1.0-RC4",
-  "com.typesafe.akka" %% "akka-http-experimental" % "1.0-RC4"
+  "com.typesafe.akka" %% "akka-http-experimental" % "1.0-RC4",
+  "org.scalaj" %% "scalaj-http" % "1.1.4",
+  "com.typesafe.play" %% "play-json" % "2.3.9"
 )
 
 assemblyMergeStrategy in assembly := {

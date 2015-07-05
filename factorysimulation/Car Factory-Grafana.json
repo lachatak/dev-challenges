@@ -1,0 +1,376 @@
+{
+  "id": null,
+  "title": "Car Factory",
+  "originalTitle": "Grafana",
+  "tags": [],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "hideControls": true,
+  "sharedCrosshair": false,
+  "rows": [
+    {
+      "title": "Welcome to Grafana",
+      "height": "210px",
+      "collapse": true,
+      "editable": true,
+      "panels": [
+        {
+          "id": 2,
+          "span": 6,
+          "type": "text",
+          "mode": "html",
+          "content": "<br/>\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <ul>\n      <li>\n        <a href=\"http://grafana.org/docs#configuration\" target=\"_blank\">Configuration</a>\n      </li>\n      <li>\n        <a href=\"http://grafana.org/docs/troubleshooting\" target=\"_blank\">Troubleshooting</a>\n      </li>\n      <li>\n        <a href=\"http://grafana.org/docs/support\" target=\"_blank\">Support</a>\n      </li>\n      <li>\n        <a href=\"http://grafana.org/docs/features/intro\" target=\"_blank\">Getting started</a>  (Must read!)\n      </li>\n    </ul>\n  </div>\n  <div class=\"span6\">\n    <ul>\n      <li>\n        <a href=\"http://grafana.org/docs/features/graphing\" target=\"_blank\">Graphing</a>\n      </li>\n      <li>\n        <a href=\"http://grafana.org/docs/features/annotations\" target=\"_blank\">Annotations</a>\n      </li>\n      <li>\n        <a href=\"http://grafana.org/docs/features/graphite\" target=\"_blank\">Graphite</a>\n      </li>\n      <li>\n        <a href=\"http://grafana.org/docs/features/influxdb\" target=\"_blank\">InfluxDB</a>\n      </li>\n      <li>\n        <a href=\"http://grafana.org/docs/features/opentsdb\" target=\"_blank\">OpenTSDB</a>\n      </li>\n    </ul>\n  </div>\n</div>",
+          "style": {},
+          "title": "Documentation Links"
+        },
+        {
+          "id": 3,
+          "span": 6,
+          "type": "text",
+          "mode": "html",
+          "content": "<br/>\n\n<div class=\"row-fluid\">\n  <div class=\"span12\">\n    <ul>\n      <li>Ctrl+S saves the current dashboard</li>\n      <li>Ctrl+F Opens the dashboard finder</li>\n      <li>Ctrl+H Hide/show row controls</li>\n      <li>Click and drag graph title to move panel</li>\n      <li>Hit Escape to exit graph when in fullscreen or edit mode</li>\n      <li>Click the colored icon in the legend to change series color</li>\n      <li>Ctrl or Shift + Click legend name to hide other series</li>\n    </ul>\n  </div>\n</div>\n",
+          "style": {},
+          "title": "Tips & Shortcuts"
+        }
+      ]
+    },
+    {
+      "title": "test",
+      "height": "200px",
+      "editable": true,
+      "collapse": false,
+      "panels": [
+        {
+          "id": 4,
+          "span": 12,
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "scale": 1,
+          "y_formats": [
+            "short",
+            "short"
+          ],
+          "grid": {
+            "max": null,
+            "min": null,
+            "leftMax": null,
+            "rightMax": null,
+            "leftMin": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold2": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "resolution": 100,
+          "lines": true,
+          "fill": 1,
+          "linewidth": 1,
+          "points": true,
+          "pointradius": 3,
+          "bars": false,
+          "stack": false,
+          "spyable": true,
+          "options": false,
+          "legend": {
+            "show": true,
+            "values": true,
+            "min": false,
+            "max": false,
+            "current": true,
+            "total": false,
+            "avg": false,
+            "alignAsTable": false,
+            "rightSide": false,
+            "hideEmpty": false
+          },
+          "interactive": true,
+          "legend_counts": true,
+          "timezone": "browser",
+          "percentage": false,
+          "nullPointMode": "null as zero",
+          "steppedLine": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": true,
+            "shared": true
+          },
+          "targets": [
+            {
+              "target": "randomWalk('random walk')",
+              "function": "sum",
+              "column": "value",
+              "interval": "15s",
+              "series": "car-done",
+              "query": "select sum(value) from \"car-done\" where $timeFilter group by time($interval) fill(0) order asc",
+              "alias": "car produced",
+              "fill": "0"
+            },
+            {
+              "target": "",
+              "function": "sum",
+              "column": "value",
+              "series": "assembled",
+              "query": "select sum(value) from \"assembled\" where $timeFilter group by time($interval) fill(0) order asc",
+              "interval": "15s",
+              "fill": "0",
+              "alias": "assembled"
+            }
+          ],
+          "aliasColors": {},
+          "aliasYAxis": {},
+          "title": "Car Produced",
+          "datasource": "graphite",
+          "renderer": "flot",
+          "annotate": {
+            "enable": false
+          },
+          "seriesOverrides": [],
+          "links": [],
+          "leftYAxisLabel": "quantity"
+        }
+      ]
+    },
+    {
+      "title": "New row",
+      "height": "200px",
+      "editable": true,
+      "collapse": false,
+      "panels": [
+        {
+          "title": "Painted",
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "type": "graph",
+          "id": 6,
+          "datasource": null,
+          "renderer": "flot",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ],
+          "grid": {
+            "leftMax": null,
+            "rightMax": null,
+            "leftMin": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold2": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2Color": "rgba(234, 112, 112, 0.22)",
+            "thresholdLine": false
+          },
+          "lines": true,
+          "fill": 1,
+          "linewidth": 1,
+          "points": true,
+          "pointradius": 3,
+          "bars": false,
+          "stack": false,
+          "percentage": false,
+          "legend": {
+            "show": true,
+            "values": true,
+            "min": false,
+            "max": false,
+            "current": true,
+            "total": false,
+            "avg": false,
+            "alignAsTable": false,
+            "rightSide": false,
+            "hideEmpty": false
+          },
+          "nullPointMode": "connected",
+          "steppedLine": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "shared": true
+          },
+          "targets": [
+            {
+              "function": "sum",
+              "column": "value",
+              "series": "red",
+              "query": "select sum(value) from \"red\" where $timeFilter group by time($interval) fill(0) order asc",
+              "interval": "15s",
+              "fill": "0",
+              "alias": "red"
+            },
+            {
+              "target": "",
+              "function": "sum",
+              "column": "value",
+              "series": "blue",
+              "query": "select sum(value) from \"blue\" where $timeFilter group by time($interval) fill(0) order asc",
+              "interval": "15s",
+              "fill": "0",
+              "alias": "blue"
+            },
+            {
+              "target": "",
+              "function": "sum",
+              "column": "value",
+              "series": "yellow",
+              "query": "select sum(value) from \"yellow\" where $timeFilter group by time($interval) fill(0) order asc",
+              "interval": "15s",
+              "fill": "0",
+              "alias": "yellow"
+            }
+          ],
+          "aliasColors": {
+            "blue": "#0A437C",
+            "yellow": "#E5AC0E",
+            "red": "#890F02"
+          },
+          "seriesOverrides": [],
+          "links": [],
+          "leftYAxisLabel": "quantity"
+        }
+      ]
+    },
+    {
+      "title": "New row",
+      "height": "200px",
+      "editable": true,
+      "collapse": false,
+      "panels": [
+        {
+          "title": "Part produced",
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "type": "graph",
+          "id": 5,
+          "datasource": null,
+          "renderer": "flot",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ],
+          "grid": {
+            "leftMax": null,
+            "rightMax": null,
+            "leftMin": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold2": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "lines": true,
+          "fill": 1,
+          "linewidth": 1,
+          "points": true,
+          "pointradius": 3,
+          "bars": false,
+          "stack": false,
+          "percentage": false,
+          "legend": {
+            "show": true,
+            "values": true,
+            "min": false,
+            "max": false,
+            "current": true,
+            "total": false,
+            "avg": false
+          },
+          "nullPointMode": "null as zero",
+          "steppedLine": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "shared": true
+          },
+          "targets": [
+            {
+              "function": "sum",
+              "column": "value",
+              "series": "wheel",
+              "query": "select sum(value) from \"wheel\" where $timeFilter group by time($interval) fill(0) order asc",
+              "interval": "15s",
+              "fill": "0",
+              "alias": "wheel"
+            },
+            {
+              "target": "",
+              "function": "sum",
+              "column": "value",
+              "series": "coachwork",
+              "query": "select sum(value) from \"coachwork\" where $timeFilter group by time($interval) fill(0) order asc",
+              "interval": "15s",
+              "fill": "0",
+              "alias": "coachwork"
+            },
+            {
+              "target": "",
+              "function": "sum",
+              "column": "value",
+              "series": "engine",
+              "query": "select sum(value) from \"engine\" where $timeFilter group by time($interval) fill(0) order asc",
+              "hide": false,
+              "interval": "15s",
+              "fill": "0",
+              "alias": "engine"
+            }
+          ],
+          "aliasColors": {},
+          "seriesOverrides": [],
+          "links": [],
+          "leftYAxisLabel": "quantity"
+        }
+      ]
+    }
+  ],
+  "nav": [
+    {
+      "type": "timepicker",
+      "collapse": false,
+      "enable": true,
+      "status": "Stable",
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ],
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "now": true,
+      "notice": false
+    }
+  ],
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "5s",
+  "version": 6,
+  "hideAllLegends": false
+}

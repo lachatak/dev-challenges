@@ -1,0 +1,24 @@
+#docker run -d -p 8083:8083 -p 8086:8086 -e PRE_CREATE_DB=carfactory --expose 8090 --expose 8099 tutum/influxdb:0.8.8
+#docker run -d -p 80:80 -e INFLUXDB_HOST=127.0.0.1 -e INFLUXDB_PORT=8086 -e INFLUXDB_NAME=carfactory -e INFLUXDB_USER=root -e INFLUXDB_PASS=root tutum/grafana
+influxdb:
+  image: tutum/influxdb:0.8.8
+  ports:
+   - "8083:8083"
+   - "8086:8086"
+  expose:
+  - "8090"
+  - "8099"
+  environment:
+    PRE_CREATE_DB: carfactory
+grafana:
+  image: tutum/grafana
+  ports:
+  - "80:80"
+  environment:
+    INFLUXDB_HOST: 127.0.0.1
+    INFLUXDB_PORT: 8086
+    INFLUXDB_NAME: carfactory
+    INFLUXDB_USER: root
+    INFLUXDB_PASS: root
+  links:
+   - influxdb
