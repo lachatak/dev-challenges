@@ -12,6 +12,9 @@ import akka.stream.ActorMaterializer
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.{Cancel, Request}
 import akka.stream.scaladsl.{Sink => StreamSink, _}
+import com.netflix.hystrix.{HystrixCommandGroupKey, HystrixCommand}
+import com.netflix.hystrix.HystrixCommand.Setter
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.commons.lang3.Validate
 import play.api.libs.json.Json
@@ -20,7 +23,7 @@ import scala.beans.BeanProperty
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 import scala.util.Random
-import scalaj.http.Http
+import scalaj.http.{HttpResponse, Http}
 import scalaz.Scalaz._
 
 object ActorFlowGraphFactoryMain extends App {
@@ -55,7 +58,7 @@ object ActorFlowGraphFactoryMain extends App {
 
     val collect = builder.add(Merge[Car](3))
     val customer = StreamSink.foreach[Car](car => {
-      log.info(s"done $car")
+//      log.info(s"done $car")
       influxDBActor ! Event("car-done")
     })
 
@@ -118,7 +121,7 @@ class ProductionLineActor[T <: Producible](itemToProduce: ClassTag[T], monitorab
     while (isActive && totalDemand > 0) {
       Thread.sleep(monitorableActivity.getActivityTimeInMillis())
       val item = itemToProduce.runtimeClass.getConstructor(classOf[Boolean]).newInstance(faulty: JBoolean).asInstanceOf[T]
-      log.info(s"produced part $item")
+//      log.info(s"produced part $item")
       influxDBActor ! Event(item.getClass.getSimpleName.toLowerCase)
       onNext(item)
     }
@@ -151,7 +154,7 @@ class CarAssembler(val mbeanServer: MBeanServer, val config: Config, influxDBAct
     Future[Car]({
       Thread.sleep(mbean.getActivityTimeInMillis)
       val car = new Car(parts._1, parts._2, parts._3, Random.nextInt(101) < mbean.getFaultPercentage)
-      log.info(s"produced car $car")
+//      log.info(s"produced car $car")
       influxDBActor ! Event("assembled")
       car
     })
@@ -174,7 +177,7 @@ class CarPainter(val color: Color, val mbeanServer: MBeanServer, val config: Con
     Future[Car]({
       Thread.sleep(mbean.getActivityTimeInMillis)
       val newCar = car.copy(color = color.some, faulty = Random.nextInt(101) < mbean.getFaultPercentage)
-      log.info(s"painted car $newCar")
+//      log.info(s"painted car $newCar")
       influxDBActor ! Event(colorStr)
       newCar
     })
@@ -199,6 +202,7 @@ class MonitorableActivityMXBeanImpl(@BeanProperty var activityTimeInMillis: Long
 
 class InfluxDBActor(conf: Config) extends Actor with ActorLogging {
 
+  val hystrixRequestContext = HystrixRequestContext.initializeContext();
   val host = conf.getString("influx.host")
   val port = conf.getInt("influx.port")
   val user = conf.getString("influx.user")
@@ -206,6 +210,8 @@ class InfluxDBActor(conf: Config) extends Actor with ActorLogging {
   val db = conf.getString("influx.db")
 
   val url = s"http://$host:$port/db/$db/series?u=$user&p=$password"
+
+  println(url)
 
   def receive = {
     case Event(seriesName, timestamp) => sendToInfluxDB(convertToInfluxDBJson(seriesName, timestamp))
@@ -219,8 +225,13 @@ class InfluxDBActor(conf: Config) extends Actor with ActorLogging {
     ))
   )
 
-  def sendToInfluxDB(msg: String) = Http(url).postData(msg).header("content-type", "application/json").asString
+  def sendToInfluxDB(msg: String) = new PostDataCommand(url, msg).execute()
 
+  class PostDataCommand(val url:String, val message:String) extends HystrixCommand[HttpResponse[String]](Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("Stat"))){
+    override def run(): HttpResponse[String] = {
+      Http(url).postData(message).header("content-type", "application/json").asString
+    }
+  }
 }
 
 object InfluxDBActor {

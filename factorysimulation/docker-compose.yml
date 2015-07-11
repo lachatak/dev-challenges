@@ -1,13 +1,17 @@
-#docker run -d -p 8083:8083 -p 8086:8086 -e PRE_CREATE_DB=carfactory --expose 8090 --expose 8099 tutum/influxdb:0.8.8
-#docker run -d -p 80:80 -e INFLUXDB_HOST=127.0.0.1 -e INFLUXDB_PORT=8086 -e INFLUXDB_NAME=carfactory -e INFLUXDB_USER=root -e INFLUXDB_PASS=root tutum/grafana
+#VBoxManage controlvm boot2docker-vm natpf1 "8086,tcp,127.0.0.1,8086,,8086"
+#VBoxManage controlvm boot2docker-vm natpf1 "8083,tcp,127.0.0.1,8083,,8083"
+#VBoxManage controlvm boot2docker-vm natpf1 "80,tcp,127.0.0.1,80,,80"
+#VBoxManage controlvm boot2docker-vm natpf1 "1898,tcp,127.0.0.1,1898,,1898"
+#docker build -t lachatak/carfactory .
+#docker run -d --name influxdb -p 8083:8083 -p 8086:8086 -e PRE_CREATE_DB=carfactory --expose 8090 --expose 8099 tutum/influxdb:0.8.8
+#docker run -d --name grafana --link influxdb -p 80:80 -e INFLUXDB_HOST=192.168.59.103 -e INFLUXDB_PORT=8086 -e INFLUXDB_NAME=carfactory -e INFLUXDB_USER=root -e INFLUXDB_PASS=root tutum/grafana
+#docker run -d --name carfactory --link influxdb -p 1898:1898 lachatak/carfactory
+
 influxdb:
   image: tutum/influxdb:0.8.8
   ports:
    - "8083:8083"
    - "8086:8086"
-  expose:
-  - "8090"
-  - "8099"
   environment:
     PRE_CREATE_DB: carfactory
 grafana:
@@ -15,10 +19,16 @@ grafana:
   ports:
   - "80:80"
   environment:
-    INFLUXDB_HOST: 127.0.0.1
+    INFLUXDB_HOST: 192.168.59.103
     INFLUXDB_PORT: 8086
     INFLUXDB_NAME: carfactory
     INFLUXDB_USER: root
     INFLUXDB_PASS: root
+carfactory:
+  build: .
+  ports:
+   - "1898:1898"
+  environment:
+    HOSTNAME: 192.168.59.103
   links:
-   - influxdb
+   - "influxdb"

@@ -10,7 +10,7 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
 javacOptions ++= Seq("-Xlint:deprecation", "-encoding", "utf8")
 
-mainClass in assembly := Some("org.kaloz.factorysimulation.SimpleFlowGraphFactoryMain")
+mainClass in assembly := Some("org.kaloz.factorysimulation.ActorFlowGraphFactoryMain")
 
 assemblyJarName in assembly := "factorysimulation.jar"
 
@@ -22,19 +22,11 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-core-experimental" % "1.0-RC4",
   "com.typesafe.akka" %% "akka-http-experimental" % "1.0-RC4",
   "org.scalaj" %% "scalaj-http" % "1.1.4",
-  "com.typesafe.play" %% "play-json" % "2.3.9"
+  "com.typesafe.play" %% "play-json" % "2.3.9",
+  "com.netflix.hystrix" % "hystrix-core" % "1.4.12"
 )
 
-assemblyMergeStrategy in assembly := {
-  case x if x.endsWith("UnusedStubClass.class") => MergeStrategy.first
-  case PathList("com", "google", xs@_*) => MergeStrategy.first
-  case x =>
-    val oldStrategy = (assemblyMergeStrategy in assembly).value
-    oldStrategy(x)
-}
-
 // Test Dependencies
-
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "3.4" % "test",
   "org.specs2" %% "specs2-mock" % "3.4" % "test",
