@@ -23,6 +23,8 @@ The Challenge is (minor) part a modelling task, (major) part a parallel programm
 - W-PG: paints cars to green
 - W-M: merges the 3 conveyor belts into one
 
+Every workstation could have a definied production or assemle time. Let's say producing a wheel could take 500ms, a coachwork 1000ms, an engine 3000ms and assembling a car could take up to 5s. 
+
 For the simulation you should implement the following as concurrent, independent processes
 - the Factory, obviously
 - a Consumer that will consume the cars rolling out of the Factory and keeps counting them to measure the throughput of the Factory
