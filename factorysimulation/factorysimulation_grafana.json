@@ -103,8 +103,8 @@
               "function": "sum",
               "column": "value",
               "interval": "15s",
-              "series": "car-done",
-              "query": "select sum(value) from \"car-done\" where $timeFilter group by time($interval) fill(0) order asc",
+              "series": "done",
+              "query": "select sum(value) from \"done\" where $timeFilter group by time($interval) fill(0) order asc",
               "alias": "car produced",
               "fill": "0"
             },
