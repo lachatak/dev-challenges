@@ -12,3 +12,13 @@ This is my solution for **Dev Challenges** series [Car Factory Simulation](CHALL
 ## How it works? ##
 
 UNDER DEVELOPMENT
+
+## Screen shots ##
+### InfluxDB ###
+![Alt text](pics/InfluxDB.png?raw=true "Influx")
+
+### Grafana ###
+![Alt text](pics/Grafana.png?raw=true "Grafana")
+
+### jconsole ###
+![Alt text](pics/jconsole.png?raw=true "jconsole")
