@@ -2,6 +2,8 @@
 
 This is my solution for **Dev Challenges** series [Car Factory Simulation](CHALLENGE.md) section.
 
+My solution was inspired by [this](http://www.smartjava.org/content/visualizing-back-pressure-and-reactive-streams-akka-streams-statsd-grafana-and-influxdb) blog entry which is about visualising back-passure and recative streams.
+
 ### Tool set
 - [Akka Streams](http://doc.akka.io/docs/akka-stream-and-http-experimental/1.0-RC4/scala.html?_ga=1.167543678.1764891530.1418773886) to have actor and streams support to wire up the factory
 - [InfluxDB](https://influxdb.com/) to save timeseries information of the production line
